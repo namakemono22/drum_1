@@ -133,7 +133,7 @@
       'i': 'ride', 'o': 'ride'
     };
 
-    let key = event.keyCode || event.key;
+    let key = event.key;
     let soundKey = keyActions[key];
     if (soundKey) {
       playSound(soundKey);
