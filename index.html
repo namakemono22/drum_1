@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ドラム</title>
 <style>
+  /* スクロールを禁止 */
+  body
+  {
+    overflow: hidden;
+    margin: 0; /* ページの余白を消す */
+  }
   @keyframes shake-animation {
     0% {
         transform: translateY(0);
@@ -22,9 +28,7 @@
   :root {
    --img-size: 20%;
   }
-  #drams {
-    position: relative;
-  }
+
   .dram {
     width: var(--img-size);
     height: auto;
@@ -54,19 +58,14 @@
     border: none; /* ボーダーを消す */
     border-radius: 5px; /* ボタンの角を丸くする */
     transition: background-color 0.3s; /* 背景色の変化をスムーズにする */
+    position: absolute; /* ボタンを絶対位置に設定 */
+    top: 50%; /* 縦方向中央 */
+    left: 40%; /* 横方向中央 */
   }
   #start-button:hover {
     background-color: #0056b3; /* ホバー時の背景色 */
   }
 
-  /* ボタンを中央に配置 */
-  .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    text-align: center;
-  }
 </style>
 <script>
   let audioContext;
@@ -167,19 +166,13 @@
 </head>
 <body>
 
-  <div class="container">
-    <div>
-      <!-- 音量調整のためのスライダー -->
-      <div class="volume-control">
-        <label for="volume-slider">音量:</label>
-        <input type="range" min="0" max="1" step="0.1" value="0.5"
-        class="volume-slider" id="volume-slider" onchange="adjustVolume()">
-      </div>
-  
-      <!-- AudioContext の初期化ボタン -->
-      <button id="start-button" onclick="initAudio()">音声を有効にする</button>
-    </div>
-  </div>
+
+<!-- 音量調整のためのスライダー -->
+<div class="volume-control">
+  <label for="volume-slider">音量:</label>
+  <input type="range" min="0" max="1" step="0.1" value="0.5"
+  class="volume-slider" id="volume-slider" onchange="adjustVolume()">
+</div>
 <!-- ドラムの画像 -->
 <div id="drams">
     <img class="dram" id="bass_img" src="バス1.png">
@@ -190,5 +183,7 @@
     <img class="dram" id="hi_hat_img" src="ハイハット1.png">
     <img class="dram" id="ride_img" src="ライド1.png">
 </div>
+<!-- AudioContext の初期化ボタン -->
+<button id="start-button" onclick="initAudio()">音声を有効にする</button>
 </body>
 </html>
