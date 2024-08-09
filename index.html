@@ -47,6 +47,25 @@
   }
   #start-button {
     cursor: pointer;
+    padding: 15px 30px;
+    font-size: 24px; /* ボタンの文字を大きくする */
+    background-color: #007bff; /* 背景色 */
+    color: #fff; /* 文字色 */
+    border: none; /* ボーダーを消す */
+    border-radius: 5px; /* ボタンの角を丸くする */
+    transition: background-color 0.3s; /* 背景色の変化をスムーズにする */
+  }
+  #start-button:hover {
+    background-color: #0056b3; /* ホバー時の背景色 */
+  }
+
+  /* ボタンを中央に配置 */
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
   }
 </style>
 <script>
@@ -54,10 +73,10 @@
   let buffers = {};
 
   function initAudio() {
-    // AudioContextがまだ作成されていない場合に作成
     if (!audioContext) {
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
       loadAudioFiles();
+      document.getElementById('start-button').style.display = 'none'; // ボタンを非表示にする
     }
   }
 
@@ -100,7 +119,6 @@
 
   function adjustVolume() {
     let volume = document.getElementById("volume-slider").value;
-    // 音量調整のため、すべての音源を再度設定する
     Object.values(buffers).forEach(buffer => {
       if (buffer) {
         let source = audioContext.createBufferSource();
@@ -112,29 +130,30 @@
     });
   }
 
-  // ボタンがクリックされたときに AudioContext を初期化
-  document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('start-button').addEventListener('click', initAudio);
-  });
-
   document.addEventListener("keydown", function(event) {
-    // AudioContextが作成されていない場合は処理を中止
     if (!audioContext) {
       return;
     }
     
     const keyActions = {
-      32: 'bass', 'b': 'bass', 'n': 'bass',
-      'd': 'hi_hat', 's': 'hi_hat',
-      'g': 'snare', 'h': 'snare',
-      'y': 'tam', 'u': 'tam',
-      'j': 'floor', 'k': 'floor',
-      'r': 'cymbal', 't': 'cymbal',
-      'i': 'ride', 'o': 'ride'
+      ' ': 'bass', // スペースキー
+      'b': 'bass',
+      'n': 'bass',
+      'd': 'hi_hat',
+      's': 'hi_hat',
+      'g': 'snare',
+      'h': 'snare',
+      'y': 'tam',
+      'u': 'tam',
+      'j': 'floor',
+      'k': 'floor',
+      'r': 'cymbal',
+      't': 'cymbal',
+      'i': 'ride',
+      'o': 'ride'
     };
 
-    let key = event.key;
-    let soundKey = keyActions[key];
+    let soundKey = keyActions[event.key];
     if (soundKey) {
       playSound(soundKey);
       const image = document.getElementById(`${soundKey}_img`);
@@ -143,22 +162,24 @@
         image.classList.remove('shaking');
       }, { once: true });
     }
-    console.log("音声");
   });
 </script>
 </head>
 <body>
 
-<!-- 音量調整のためのスライダー -->
-<div class="volume-control">
-    <label for="volume-slider">音量:</label>
-    <input type="range" min="0" max="1" step="0.1" value="0.5"
-    class="volume-slider" id="volume-slider" onchange="adjustVolume()">
-</div>
-
-<!-- AudioContext の初期化ボタン -->
-<button id="start-button">音声を有効にする</button>
-
+  <div class="container">
+    <div>
+      <!-- 音量調整のためのスライダー -->
+      <div class="volume-control">
+        <label for="volume-slider">音量:</label>
+        <input type="range" min="0" max="1" step="0.1" value="0.5"
+        class="volume-slider" id="volume-slider" onchange="adjustVolume()">
+      </div>
+  
+      <!-- AudioContext の初期化ボタン -->
+      <button id="start-button" onclick="initAudio()">音声を有効にする</button>
+    </div>
+  </div>
 <!-- ドラムの画像 -->
 <div id="drams">
     <img class="dram" id="bass_img" src="バス1.png">
