@@ -51,6 +51,7 @@
   let buffers = {};
 
   function initAudio() {
+    // AudioContextがまだ作成されていない場合に作成
     if (!audioContext) {
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
       loadAudioFiles();
@@ -58,6 +59,7 @@
   }
 
   function loadAudioFiles() {
+    // 音声ファイルのパスを定義
     const audioFiles = {
       bass: 'bass.wav',
       hi_hat: 'hi_hat.wav',
@@ -68,6 +70,7 @@
       ride: 'ride.wav'
     };
 
+    // 音声ファイルを読み込み、デコードしてバッファに格納
     let promises = Object.keys(audioFiles).map(key => {
       return fetch(audioFiles[key])
         .then(response => response.arrayBuffer())
@@ -83,6 +86,7 @@
   }
 
   function playSound(key) {
+    // 音声を再生
     if (buffers[key]) {
       let source = audioContext.createBufferSource();
       source.buffer = buffers[key];
@@ -95,9 +99,11 @@
   }
 
   document.addEventListener("keydown", function(event) {
+    // AudioContextが作成されていない場合は処理を中止
     if (!audioContext) {
       return;
     }
+    
     const keyActions = {
       32: 'bass', 'b': 'bass', 'n': 'bass',
       'd': 'hi_hat', 's': 'hi_hat',
@@ -122,7 +128,7 @@
 
   function adjustVolume() {
     let volume = document.getElementById("volume-slider").value;
-    // 音量調整のため、全ての音源を再度設定する
+    // 音量調整のため、すべての音源を再度設定する
     Object.values(buffers).forEach(buffer => {
       if (buffer) {
         let source = audioContext.createBufferSource();
