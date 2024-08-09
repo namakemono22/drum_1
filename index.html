@@ -161,11 +161,6 @@
     }
   }
 
-  function startAudio() {
-    initializeAudioContext();
-    document.getElementById('start-button').style.display = 'none'; // Hide start button
-  }
-
   document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('start-button').addEventListener('click', startAudio);
     document.addEventListener("keydown", handleKeydown);
@@ -185,7 +180,6 @@
   <label for="volume-slider">Volume:</label>
   <input type="range" min="0" max="1" step="0.1" value="0.5" class="volume-slider" id="volume-slider">
 </div>
-<button id="start-button">Start Audio</button>
 <div id="drums">
   <img class="dram" id="bass_img" src="バス1.png">
     <img class="dram" id="floor_img" src="フロア1.png">
