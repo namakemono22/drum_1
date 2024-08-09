@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drum Kit</title>
+<style>
+  @keyframes shake-animation/*アニメーションの動作*/
+  {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px); /* 上に5px移動 */
+    }
+    100% {
+        transform: translateY(0); /* 元の位置に戻る */
+    }
+  }
+  .shaking/*アニメーションの実行*/
+  {
+    animation: shake-animation 0.05s ease-out;
+  }
+ /* 変数の定義 */
+  :root
+  {
+   --img-size: 20%;
+  }
+  #drams
+  {
+    position: relative;
+  }
+  .dram
+  {
+    width: var(--img-size);
+    height: auto;
+    position: absolute;
+  }
+  #floor_img
+  {
+    top: 300px;
+    left: 550px;
+  }
+  #cymbal_img
+  {
+    top: 20px;
+    left: 230px;
+  }
+  #ride_img
+  {
+    top: 90px;
+    left: 560px;
+  }
+  #bass_img
+  {
+    top: 260px;
+    left: 380px;
+  }
+  #tam_img
+  {
+    width: 15%;
+    height: auto;
+    top: 150px;
+    left: 400px;
+  }
+  #snare_img
+  {
+    top: 250px;
+    left: 300px;
+  }
+  #hi_hat_img
+  {
+    top: 160px;
+    left: 160px;
+  }
+  .volume-control
+  {
+    display: flex;
+    align-items: center;
+  }
+  .volume-slider
+  {
+    width: 100px;
+    margin-left: 10px;
+  }
+</style>
+<script>
+  let audioContext;
+  const audioElements = {
+    bass: new Audio('bass.wav'),
+    hi_hat: new Audio('hi_hat.wav'),
+    snare: new Audio('snare.wav'),
+    tam: new Audio('tam.wav'),
+    floor: new Audio('floor.wav'),
+    cymbal: new Audio('cymbal.wav'),
+    ride: new Audio('ride.wav')
+  };
+  const gainNodes = {};
+
+  function initializeAudioContext() {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    initializeGainNodes();
+    adjustVolume(); // Initialize volume settings
+  }
+
+  function initializeGainNodes() {
+    for (let key in audioElements) {
+      const audio = audioElements[key];
+      const source = audioContext.createMediaElementSource(audio);
+      const gainNode = audioContext.createGain();
+      source.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      gainNodes[key] = gainNode;
+    }
+  }
+
+  function playSound(id) {
+    let audio = audioElements[id];
+    if (!audio) return;
+    audio.currentTime = 0; // Restart the audio
+    audio.play();
+  }
+
+  function handleKeydown(event) {
+    const keyMap = {
+      'b': 'bass',
+      'n': 'bass',
+      'd': 'hi_hat',
+      's': 'hi_hat',
+      'g': 'snare',
+      'h': 'snare',
+      'y': 'tam',
+      'u': 'tam',
+      'j': 'floor',
+      'k': 'floor',
+      'r': 'cymbal',
+      't': 'cymbal',
+      'i': 'ride',
+      'o': 'ride'
+    };
+
+    let soundId = keyMap[event.key];
+    if (soundId) {
+      playSound(soundId);
+      // Handle animation
+      let image = document.getElementById(`${soundId}_img`);
+      if (image) {
+        image.classList.add('shaking');
+        image.addEventListener('animationend', function() {
+          image.classList.remove('shaking');
+        }, { once: true });
+      }
+    }
+  }
+
+  function adjustVolume() {
+    let volumeSlider = document.getElementById("volume-slider");
+    let volume = volumeSlider.value;
+    for (let key in gainNodes) {
+      gainNodes[key].gain.value = volume;
+    }
+  }
+
+  function startAudio() {
+    initializeAudioContext();
+    document.getElementById('start-button').style.display = 'none'; // Hide start button
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('start-button').addEventListener('click', startAudio);
+    document.addEventListener("keydown", handleKeydown);
+    document.getElementById("volume-slider").addEventListener("input", adjustVolume);
+  });
+</script>
+</head>
+<body>
+  <audio id="bass" src="bass.wav"></audio>
+  <audio id="hi_hat" src="hi_hat.wav"></audio>
+  <audio id="snare" src="snare.wav"></audio>
+  <audio id="tam" src="tam.wav"></audio>
+  <audio id="floor" src="floor.wav"></audio>
+  <audio id="cymbal" src="cymbal.wav"></audio>
+  <audio id="ride" src="ride.wav"></audio>
+<div class="volume-control">
+  <label for="volume-slider">Volume:</label>
+  <input type="range" min="0" max="1" step="0.1" value="0.5" class="volume-slider" id="volume-slider">
+</div>
+<button id="start-button">Start Audio</button>
+<div id="drums">
+  <img class="dram" id="bass_img" src="バス1.png">
+    <img class="dram" id="floor_img" src="フロア1.png">
+    <img class="dram" id="tam_img" src="タム1.png">
+    <img class="dram" id="snare_img" src="スネア1.png">
+    <img class="dram" id="cymbal_img" src="シンバル1.png">
+    <img class="dram" id="hi_hat_img" src="ハイハット1.png">
+    <img class="dram" id="ride_img" src="ライド1.png">
+</div>
+
+</body>
+</html>
