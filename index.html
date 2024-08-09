@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>drum</title>
+<title>ドラム</title>
 <style>
   @keyframes shake-animation {
     0% {
@@ -49,13 +49,13 @@
 <script>
   let audioContext;
   let buffers = {};
-  let volumeNodes = {};
 
-  document.addEventListener("DOMContentLoaded", function(event) {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    loadAudioFiles();
-    adjustVolume();
-  });
+  function initAudio() {
+    if (!audioContext) {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      loadAudioFiles();
+    }
+  }
 
   function loadAudioFiles() {
     const audioFiles = {
@@ -78,7 +78,7 @@
     });
 
     Promise.all(promises).then(() => {
-      console.log("Audio files loaded");
+      console.log("音声ファイルが読み込まれました");
     });
   }
 
@@ -95,6 +95,9 @@
   }
 
   document.addEventListener("keydown", function(event) {
+    if (!audioContext) {
+      return;
+    }
     const keyActions = {
       32: 'bass', 'b': 'bass', 'n': 'bass',
       'd': 'hi_hat', 's': 'hi_hat',
@@ -119,6 +122,7 @@
 
   function adjustVolume() {
     let volume = document.getElementById("volume-slider").value;
+    // 音量調整のため、全ての音源を再度設定する
     Object.values(buffers).forEach(buffer => {
       if (buffer) {
         let source = audioContext.createBufferSource();
@@ -129,22 +133,22 @@
       }
     });
   }
+
+  // ユーザーの操作で AudioContext を開始
+  document.addEventListener('click', initAudio);
+  document.addEventListener('keydown', initAudio); // キー押下でも開始
 </script>
 </head>
 <body>
 
-  <audio id="bass" src="bass.wav"></audio>
-  <audio id="hi_hat" src="hi_hat.wav"></audio>
-  <audio id="snare" src="snare.wav"></audio>
-  <audio id="tam" src="tam.wav"></audio>
-  <audio id="floor" src="floor.wav"></audio>
-  <audio id="cymbal" src="cymbal.wav"></audio>
-  <audio id="ride" src="ride.wav"></audio>
+<!-- 音量調整のためのスライダー -->
 <div class="volume-control">
     <label for="volume-slider">音量:</label>
     <input type="range" min="0" max="1" step="0.1" value="0.5"
     class="volume-slider" id="volume-slider" onchange="adjustVolume()">
 </div>
+
+<!-- ドラムの画像 -->
 <div id="drams">
     <img class="dram" id="bass_img" src="バス1.png">
     <img class="dram" id="floor_img" src="フロア1.png">
