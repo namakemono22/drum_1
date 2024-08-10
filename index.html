@@ -6,8 +6,7 @@
 <title>ドラム</title>
 <style>
   /* スクロールを禁止 */
-  body
-  {
+  body {
     overflow: hidden;
     margin: 0; /* ページの余白を消す */
   }
@@ -70,6 +69,7 @@
 <script>
   let audioContext;
   let buffers = {};
+  let gainNodes = {}; // GainNodes を保存するオブジェクト
 
   function initAudio() {
     if (!audioContext) {
@@ -96,6 +96,8 @@
         .then(data => audioContext.decodeAudioData(data))
         .then(buffer => {
           buffers[key] = buffer;
+          gainNodes[key] = audioContext.createGain(); // 各音の GainNode を作成
+          gainNodes[key].gain.value = 0.5; // 初期音量
         });
     });
 
@@ -108,24 +110,16 @@
     if (buffers[key]) {
       let source = audioContext.createBufferSource();
       source.buffer = buffers[key];
-      let gainNode = audioContext.createGain();
-      gainNode.gain.value = document.getElementById("volume-slider").value;
-      source.connect(gainNode);
-      gainNode.connect(audioContext.destination);
+      source.connect(gainNodes[key]);
+      gainNodes[key].connect(audioContext.destination);
       source.start(0);
     }
   }
 
   function adjustVolume() {
     let volume = document.getElementById("volume-slider").value;
-    Object.values(buffers).forEach(buffer => {
-      if (buffer) {
-        let source = audioContext.createBufferSource();
-        let gainNode = audioContext.createGain();
-        gainNode.gain.value = volume;
-        source.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-      }
+    Object.values(gainNodes).forEach(gainNode => {
+      gainNode.gain.value = volume;
     });
   }
 
@@ -165,8 +159,6 @@
 </script>
 </head>
 <body>
-
-
 <!-- 音量調整のためのスライダー -->
 <div class="volume-control">
   <label for="volume-slider">音量:</label>
